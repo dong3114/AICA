@@ -187,9 +187,52 @@
 		</li>
 		<li>
 			<div th:insert="/home/fragment::frag01" style="background-color: yellow;"></div>
-		</li>		
+		</li>
+		<li>
+			<div th:replace="${true}?~{/home/fragment::frag01} : _" style="background-color: yellow;"></div>
+		</li>
+		<li>
+			<div th:replace="~{/home/fragment::frag02('가', '나')}" style="background-color: yellow;"></div>
+		</li>
+		<li>
+			<div th:replace="~{/home/fragment :: frag03(~{:: .msg})}"> <!--/* css selector */-->
+            	<i class="title">Title</i>
+            	<i class="msg">Message</i>
+        	</div>
+		</li>
 	</ul>
-    
-    
+	
+	<h2>7 Fragment</h2>
+	<div th:replace="~{/home/util-object :: utilFragment}"></div>
+	
+	<h2>8 JavaScript</h2>
+	<script>
+		let msg = "[[${session.msg }]]";
+	    let msg2 = "[(${msg })]";
+	    let msg3 = "/*[[${session.msg}]]*/";
+	    let name = "[[${param.name }]]";
+	    let num = [[${a }]];
+		/* let user = [[${user }]]; */
+	</script>
+	<script th:inline="javascript">
+	    /* <![CDATA[ */
+	        msg = [[${session.msg }]];
+	        msg2 = "[(${msg })]";
+	        msg3 = /*[[${session.msg}]]*/;
+	        name = [[${param.name }]];
+	        num = [[${a }]];
+	
+	        let user = [[${user }]];
+	
+	        console.log(user.userName);
+	
+	        [# th:each="item, stat: ${list}" #]
+	        var num[[${stat.index}]] = [[${item}]];
+	        [/]
+	    /* ]]> */
+    </script>
+	
+	
+	
 </body>
 </html>
