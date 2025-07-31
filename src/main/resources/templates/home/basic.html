@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title>List, Map, 클래스 예제</title>
+<style type="text/css">
+	.text{
+		background-color: slategray;
+	}
+	
+	.large{
+		height: 15px;
+	}
+	
+	.bold{
+		font-size: 15px;
+	}
+	
+	.active{
+		background-color: slategray;
+	}
+	
+	.deactive{
+		background-color: black;
+	}
+</style>
+</head>
+<body>
+	<h1>Thymeleaf</h1>
+	
+	<h2>1 EL</h2>
+	<h3>1-1 EL 문법</h3>
+		<ul>
+			<li th:text="${session.msg}"></li>	<!-- Session -->
+			<li th:text="${param.name}"></li>	<!-- Query Parameter: 쿼리스트링으로 값 전달하거나 했을때 -->
+			<li th:text="${a}"></li>	<!-- Request -->
+			<li th:text="'1+2 =' + ${1+2 }"></li>
+			<li th:text="${a > 0 ? 'a는 0보다 크다' : 'a는 0보다 작다'}"></li>
+		</ul>
+	<h3>1-2 주석</h3>
+	<ul>
+        <li>HTML: <!-- 기본 주석 --> &lt;!-- 기본 주석 --&gt;</li>
+        <li>Thymeleaf: <!--/* 타임리프 주석 - 출력안됨 */-->  &lt;!--/* 타임리프 주석 - 출력안됨 */--&gt; </li>
+        <li>Thymeleaf: <!--/*/ 타임리프 주석 - 실행되면 출력, 실행안되면 주석처리 /*/-->  &lt;!--/*/ 타임리프 주석 - 실행되면 출력, 실행 안되면 주석처리 /*/--&gt;</li>
+    </ul>
+	
+	<h2>2 표현식</h2>
+	<div>
+        ${...}:    변수의 값,  *{...}: 선택 변수 표현식, #{...}: 메시지(message.properties, 국제화) 표현식, @{...}: URL 표현식, ~{...}: 조각 표현식
+    </div>
+    <h3>${...}, @{...}</h3>
+    <ul>
+    	<li th:text="'메시지는 &quot;<b>' + ${session.msg } + '</b>&quot; 입니다.'"></li>
+    	<li th:utext="'메시지는 &quot;<b>' + ${session.msg } + '</b>&quot; 입니다.'"></li>
+    	<li>메시지는 &quot;[[ ${msg} ]] &quot; 입니다.</li>
+    	<li>메시지는 &quot;[( ${msg} )] &quot; 입니다.</li>
+    	<li th:utext="|메시지는 &quot;<b>${session.msg }</b>&quot; 입니다.|"></li>
+    	<li>스프링빈: [[ ${@defaultTemplateBasicService.getMap()['A']} ]] </li>
+    </ul>
+    <ul>
+		<li><a th:href="@{/home/basic }">단순 URL</a></li>    
+		<li><a th:href="@{/home/basic(name=${user.userName}, id=${user.userId},)}">쿼리 parameter</a></li>
+		<li><a th:href="@{/home/basic/{name}/{id}(name=${user.userName}, id=${user.userId},)}">경로 Parameter</a></li>    
+		<li><a th:href="@{/home/basic/{id}(name=${user.userName}, id=${user.userId}) }">쿼리 parameter</a></li>
+    </ul>
+    
+    <h3>*{...}</h3>
+    <ul th:object="${user}">
+    	<li th:text="${user.userId }"></li>
+    	<li th:text="*{userName }"></li>
+    </ul>
+    
+    <h2>3 Data, 연산자 </h2>
+    <ul th:with="val=${str }, val1='Hello', val2=null, val3=''">
+    	<li th:text="| str: ${str}, val: ${val}, val2: ${val2}, val3: ${val3}, val4: ${val4} |"></li>
+    	<li th:text="|num: ${num} x 2 = ${num*2} |"></li>
+    	<li>
+    		<span th:text="1 > 2"></span>,
+    		<span th:text="1 == 2"></span>,
+    		<span th:text="1 != 2"></span>
+   		</li>
+   		<li>
+   			<div th:text="(3 % 2 == 0)?'짝수':'홀수'"></div>
+   		</li>
+   		<!-- null 체킹하는 엘비스 연산자 -->
+   		<li>
+	   		Elvis 연산자:<span th:text="${val1}?:'값 없음'"></span>,
+	   		No-Operation:<span th:text="${val1}?:_"></span>
+   		</li>
+   		<li>
+	   		Elvis 연산자:<span th:text="${val2}?:'값 없음'"></span>,
+	   		No-Operation:<span th:text="${val2}?:_"></span>
+   		</li>
+   		<li>
+	   		Elvis 연산자:<span th:text="${val3}?:'값 없음'"></span>,
+	   		No-Operation:<span th:text="${val3}?:_"></span>
+   		</li>	
+    </ul>
+    
+    <h2>4. if, for</h2>
+    <h3>4-1 if</h3>
+    <ol>
+    	<li><span th:if="${a > 5}">크다</span>, <span th:if="${a <= 5}">작다</span></li>
+    	<li><span th:if="${a > 5}">크다</span>, <span th:unless="${a > 5}">작다</span></li>
+    	<li>
+    		<th:block>
+    			<th:block th:if="${a > 5 and a < 15 }">조건 만족</th:block>
+    			<th:block th:if="${a <= 5 and a >= 15 }">조건 불만족</th:block>
+    		</th:block>
+    	</li>
+    	<li th:with="str='E'" th:switch="${str}">
+    		<span th:case="A">90~</span>
+            <span th:case="B">80~89</span>
+            <span th:case="C">70~79</span>
+            <span th:case="*">~69</span>
+    	</li>
+    	<li th:with="even=true, status='alert'">
+    		<div th:text="${even?'짝수':'홀수'}"></div>
+    		<div th:text="${even}?(${status=='alert'?'경고':'정상'}):'홀수'"></div>
+    		<div th:text="${even}?(${status=='alert'?:'정상'}):'홀수'"></div>
+    	</li>
+    </ol>
+    
+    <h3>4-2 loop</h3>
+    <ul>
+    	<li>
+    		<span th:each="item : ${list}">[[ ${item} ]], </span>
+    	</li>
+    	<li>
+    		<th:block th:each="item, stat : ${list}">
+    			<div th:text="| ${stat.index}, ${stat.count}, ${stat.size}, ${stat.even}, ${stat.odd},
+                ${stat.first}, ${stat.last}, ${stat.current} : ${item} |"></div>
+    		</th:block>
+    	</li>
+    	<li>
+			<div th:with="nums=${#numbers.sequence(1,10)}">
+                <span th:each="i: ${nums}">[[${i }]],</span>
+            </div>
+    	</li>
+    </ul>
+    
+    <h2>5 Form, Attribute</h2>
+	   	<form action="./basic" method="post" th:object="${user}">
+	   		<input type="text" id="idx" name="기본값" class="text" 
+	   			th:attrappend="class=' large'" th:classappend="bold"
+	   			th:name="*{idx}" th:value="*{idx}"
+	   			/>
+	   		<input type="text" th:field="*{userId}" required 
+	   			   th:attr="readonly=true, required=true, placeholder=${msg}"/>
+	   		<input type="text" th:field="*{userName}" required
+	   			th:data-el="*{userName}" />
+	   		<th:block th:if="true">
+	   			<input type="text" th:class="${false?'active' : 'deactive'}">
+	   			<select id="userRole" name="userRole" 
+                		th:with="nums=${#numbers.sequence(1,10)}">
+               		<option value="">선택해 주세요.</option>
+               		<option th:each="num: ${nums}"
+               				th:value="${num}"
+               				th:text="${num}"
+               				th:selected="${num==3}"></option>
+                </select>
+	   		</th:block>
+	   		<div>
+	   			<label><input type="checkbox" th:field="*{userStatus}" th:text="1" th:value="1"></label>
+	   			<label><input type="checkbox" th:field="*{userStatus}" th:text="2" th:value="2"
+	   			th:checked="true"></label>
+	   		</div>
+	   		<div>
+	   			<label><input type="checkbox" name="agree" th:text="동의함" th:value="동의함"></label>
+	   		</div> 
+	   		<div>
+	            <label><input type="radio" name="userCheck" id="userCheck1" th:value="1" th:text="yes" th:checked="${a==10}"/></label>
+	            <label><input type="radio" name="userCheck" id="userCheck2" th:value="2" th:text="no" th:checked="${a!=10}"/></label>
+        	</div>
+	   		<div>
+	   			<button type="submit">제출</button>
+	   		</div>
+	   	</form>
+    <h2>6 Fragment</h2>
+	<ul>
+		<li>
+			<div th:insert="~{/home/fragment::frag01}" style="background-color: yellow;"></div>
+		</li>
+		<!-- replace는 insert와 다르게 기존의 포멧 삭제하고 가져온 폼을 사용함 -->
+		<li>
+			<div th:replace="~{/home/fragment::frag01}" style="background-color: yellow;"></div>
+		</li>
+		<li>
+			<div th:insert="/home/fragment::frag01" style="background-color: yellow;"></div>
+		</li>		
+	</ul>
+    
+    
+</body>
+</html>

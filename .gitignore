@@ -1,0 +1,69 @@
+# ---------------------------------------
+# Gradle
+# ---------------------------------------
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.properties
+
+# 소스 내부 build/ 폴더 제외
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ---------------------------------------
+# Eclipse / Spring Tool Suite (STS)
+# ---------------------------------------
+.classpath
+.project
+.settings/
+.springBeans
+.factorypath
+.apt_generated
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+.sts4-cache
+
+# ---------------------------------------
+# IntelliJ IDEA
+# ---------------------------------------
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# ---------------------------------------
+# NetBeans
+# ---------------------------------------
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ---------------------------------------
+# Visual Studio Code
+# ---------------------------------------
+.vscode/
+
+# ---------------------------------------
+# OS 관련
+# ---------------------------------------
+.DS_Store
+Thumbs.db
+
+# ---------------------------------------
+# 기타 임시 파일
+# ---------------------------------------
+*.log
+*.tmp
+*.bak
+*.swp
+
+# ---------------------------------------
+# 도움말 등 불필요 파일
+# ---------------------------------------
+HELP.md
