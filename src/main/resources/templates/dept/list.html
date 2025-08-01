@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{/dept/default_layout}">
+	<div layout:fragment="content">
+		<h1><i class="bi bi-clipboard-check"></i> 부서목록</h1>
+		<table border="1" class="table table-striped">
+			<thead>
+				<tr>
+					<th>부서번호</th>
+					<th>부서명</th>
+					<th>부서위치</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="dept : ${deptList}">
+					<td th:text="${dept.deptNo}"></td>
+					<td th:text="${dept.dName}"></td>
+					<td th:text="${dept.loc}"></td>
+				</tr>
+			</tbody>
+		</table>
+		[[ ${message} ]]	
+		<div>
+			<form action="./insert" method="post" id="frmForm">
+				<ul th:object="${dept}">
+					<li>
+						<label>부서번호</label>
+						<input type="number" th:field="*{deptNo}" min="0" max="100" step="10" required>
+					</li>
+					<li>
+						<label>부서명</label>
+						<input type="text" th:field="*{dName}" maxlength="14" required>
+					</li>
+					<li>
+						<label>위치</label>
+						<input type="text" th:field="*{loc}" maxlength="13" required>
+					</li>
+				</ul>
+				<button type="submit" class="btn btn-primary" id="btnNew">신규등록</button>
+				<button type="submit" class="btn btn-warning" id="btnUpdate">수정저장</button>
+        		<button type="submit" class="btn btn-danger" id="btnDelete">삭제</button>
+			</form>
+		</div>
+
+		
+	</div>
+	<div layout:fragment="script">
+		<script>
+			// id가 frmForm인 요소객체에서 submit 이벤트가 발생되면 함수를 실행해라
+			$('#frmForm').on('submit', function(e) {});
+			
+		</script>
+	</div>
+	
+</html>
