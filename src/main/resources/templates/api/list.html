@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{/dept/default_layout}">
+	<div layout:fragment="content">
+		<h1><i class="bi bi-clipboard-check"></i> 부서목록</h1>
+		<table border="1" class="table table-striped" id="dept_table">
+			<thead>
+				<tr>
+					<th>부서번호</th>
+					<th>부서명</th>
+					<th>부서위치</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+		
+		<div>
+			<form action="./insert" method="post" id="frmForm">
+				<ul>
+		            <li><label>부서번호:</label> <input type="number" id="deptNo" name="deptNo" min="0" max="100" step="10" required onkeydown="return false"></li>
+		            <li><label>부서명:</label> <input type="text" id="dName" name="dName" maxlength="50" required></li>
+		            <li><label>위치:</label> <input type="text" id="loc" name="loc" maxlength="50" required></li>
+		        </ul>
+				<button type="submit" class="btn btn-primary" id="btnNew">신규등록</button>
+				<button type="submit" class="btn btn-warning" id="btnUpdate">수정저장</button>
+        		<button type="submit" class="btn btn-danger" id="btnDelete">삭제</button>
+        		<button type="button" class="btn btn-secondary" id="btnReset">초기화</button>
+			</form>
+		</div>
+	</div>
+	<div layout:fragment="script">
+		<script>
+			// , 뒤의 {}는 파라미터를 보내는것
+			function getDetail(deptno) {
+				// ajax
+				$.get('/api/depts/' + deptno, {}, function(dept) {
+					$("#deptNo").val(dept.deptNo); 
+					$("#dName").val(dept.dname); 
+					$("#loc").val(dept.loc);
+				});				
+			}
+			// 나중에 사용할때 파라미터값으로 deptno 넣으면 비동기처리 됨
+			// getDetail(10);
+			// 빈 객체 하나 선언
+			//let result = '';
+			
+			function getList() {
+				let result = '';
+				$.get('/api/depts', {}, function(list) {
+					console.log(list, list.deptList[0]);
+					for(let dept of list.deptList) {
+						console.log(dept);
+						result += `
+						<tr>
+							<td>${dept.deptNo}</td>
+							<td><a href="#" class="details" data-deptNo="${dept.deptNo}">${dept.dname}</a></td>
+							<td>${dept.loc}</td>
+						</tr>
+						`;
+					}
+					// > 는 요소의 자식객체라는 뜻
+					$('#dept_table > tbody').empty().append(result);
+				});				
+			}
+			// dom 생성의 여부 따지지 않고 실행함. 꺠질 확률있음
+			// getList();
+			// dom이 로드 되면 실행함. 안전함.
+			$(document).ready(function() {
+				getList();				
+			})
+			.on('click', '.details', function() {
+				const deptno = $(this).attr('data-deptNo');
+				console.log(deptno);
+				getDetail(deptno);
+			});
+			
+			$('#frmForm').on('submit', function(e) {
+				let result = '';
+				e.preventDefault();	// 이벤트 진행 취소
+				const method = {
+					'btnNew':'POST',
+					'btnUpdate':'PUT',
+					'btnDelete':'DELETE',
+				};
+				const btn = event.submitter.id;
+				console.log(btn, method[btn]);
+				let deptno = '';
+				if(method[btn] == 'DELETE') {
+					deptno = $('#deptNo').val();
+				}
+				$.ajax({
+					type: method[btn],
+					url: '/api/depts/' + deptno,
+					// serialize 사용하면 폼 내부의 버튼 제외하고 쿼리스트링으로 만들어줌 
+					data: $('#frmForm').serialize(),
+					success: function(result) {
+						alert(result.message);
+						getList();
+						$("#deptNo").val(dept.deptNo); 
+						$("#dName").val(dept.dname); 
+						$("#loc").val(dept.loc);
+					},
+					error: function(requst, status, error) {
+						console.log(requst);
+						console.log(status);
+						console.log(error);
+					}
+				})
+			});
+			/*
+			const list = {
+				    "deptList": [
+				        {
+				            "deptNo": 50,
+				            "loc": "감촤",
+				            "dname": "감촤"
+				        },
+				        {
+				            "deptNo": 10,
+				            "loc": "NEW YORK",
+				            "dname": "ACCOUNTING"
+				        },
+				        {
+				            "deptNo": 20,
+				            "loc": "DALLAS",
+				            "dname": "RESEARCH"
+				        },
+				        {
+				            "deptNo": 30,
+				            "loc": "CHICAGO",
+				            "dname": "SALES"
+				        },
+				        {
+				            "deptNo": 40,
+				            "loc": "BOSTON",
+				            "dname": "OPERATIONS"
+				        }
+				    ]
+				}
+			*/
+			// 자바스크립트 객체 선언
+			/*
+			const dept = {
+		            "deptNo": 50,
+		            "loc": "BOSTON",
+		            "dname": "OPERATIONS"
+			} 
+			console.log(dept.deptNo, dept.loc, dept.dname);
+			*/
+			// document.getElementById("deptNo").value = dept.deptNo;
+			// document.getElementById("dName").value = dept.dname;
+			// document.getElementById("loc").value = dept.loc;
+			/*
+				$("#deptNo").val(dept.deptNo); 
+				$("#dName").val(dept.dname); 
+				$("#loc").val(dept.loc);
+			*/
+		</script>
+	</div>
+	
+</html>
